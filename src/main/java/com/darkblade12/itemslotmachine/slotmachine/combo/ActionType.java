@@ -7,11 +7,13 @@ public enum ActionType {
     MULTIPLY_MONEY_POT,
     RAISE_MONEY_POT,
     PAY_OUT_MONEY_POT,
+    PAY_OUT_MONEY_POT_FRACTION,
     MULTIPLY_ITEM_POT,
     RAISE_ITEM_POT,
     PAY_OUT_ITEM_POT,
     PAY_OUT_MONEY,
     PAY_OUT_ITEMS,
+    GIVE_CAPSULE_TICKETS,
     EXECUTE_COMMAND;
 
     private static final Map<String, ActionType> NAME_MAP = new HashMap<>();
