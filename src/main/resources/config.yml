@@ -48,3 +48,7 @@ coin:
   
   # The price for a single coin
   price: 100.0
+
+  # Determines whether a player is notified when the console gives them coins with '/coin give'
+  # The console still sees its own message; command blocks and RCON are not affected
+  give-message-from-console: false

@@ -71,6 +71,7 @@
 
 ### 他プラグインとの関係
 - 経済は Vault 経由。Vault がない環境でも起動できる状態を保つ
+- コンソール(`ConsoleCommandSender`)からの `/coin give` は、`config.yml` の `coin.give-message-from-console`(既定 false)が true でない限り、受け取ったプレイヤーにメッセージを出さない。他プラグインがコンソールとして `dispatchCommand` した場合も同じ。コマンドブロックと RCON は対象外(今までどおり出す)
 - 既存の機能(例: GSit の座る操作、看板の click_event によるテレポートなど)を妨げないこと。イベントをキャンセルする範囲は必要最小限にする
 
 ## 過去にハマった点(他プロジェクトでの経験)

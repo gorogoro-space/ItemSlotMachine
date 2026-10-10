@@ -13,7 +13,8 @@ public enum Setting {
 
     COIN_TYPE("coin.type"),
     COIN_USE_COMMON_ITEM("coin.use-common-item"),
-    COIN_PRICE("coin.price");
+    COIN_PRICE("coin.price"),
+    COIN_GIVE_MESSAGE_FROM_CONSOLE("coin.give-message-from-console");
 
     private String path;
 

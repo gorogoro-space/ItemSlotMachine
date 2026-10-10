@@ -117,6 +117,7 @@ IntelliJ IDEA 上で正しくプラグイン（JARファイル）を生成する
 | `coin.type` | `'gold_nugget'` | コインにするアイテム |
 | `coin.use-common-item` | `false` | `true` にすると、専用の名前や説明文がない普通のアイテムもコインとして使えます |
 | `coin.price` | `100.0` | コイン 1 枚の値段(Vault の通貨) |
+| `coin.give-message-from-console` | `false` | コンソールから `/coin give` したとき、受け取ったプレイヤーにメッセージを出すか。`false` でもコンソールには「渡しました」と出ます。コマンドブロックや RCON からの実行には関係しません。項目が無い既存の `config.yml` では `false` として扱います |
 
 ### スロットマシンの設定(template.yml / slot machines/&lt;名前&gt;.yml)
 
@@ -222,7 +223,7 @@ OP 以外のプレイヤーに使わせるには、LuckPerms などの権限プ�
 | コマンド | 説明 | 権限(既定は OP のみ) |
 |---|---|---|
 | `/coin buy <枚数>` | コインを買う(プレイヤーのみ、Vault が必要) | `itemslotmachine.command.coin.buy` |
-| `/coin give <プレイヤー> <枚数>` | コインを渡す | `itemslotmachine.command.coin.give` |
+| `/coin give <プレイヤー> <枚数>` | コインを渡す(コンソールから実行したときは、既定ではプレイヤーにメッセージを出さない) | `itemslotmachine.command.coin.give` |
 
 ### /statistic(別名 /slotstatistic、/stat、/stats)
 

@@ -8,6 +8,7 @@ import com.darkblade12.itemslotmachine.plugin.command.CommandBase;
 import com.darkblade12.itemslotmachine.util.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -59,7 +60,10 @@ public final class GiveCommand extends CommandBase<ItemSlotMachine> {
         if (self) {
             plugin.sendMessage(sender, Message.COMMAND_COIN_GIVE_RECEIVED_SELF, amount, coinText);
         } else {
-            plugin.sendMessage(player, Message.COMMAND_COIN_GIVE_RECEIVED, amount, coinText, senderName);
+            // コンソールからのときは、設定で有効にしない限りプレイヤーには知らせない
+            if (!(sender instanceof ConsoleCommandSender) || plugin.getSettings().isCoinGiveMessageFromConsole()) {
+                plugin.sendMessage(player, Message.COMMAND_COIN_GIVE_RECEIVED, amount, coinText, senderName);
+            }
             plugin.sendMessage(sender, Message.COMMAND_COIN_GIVE_SENT, amount, coinText, player.getName());
         }
     }

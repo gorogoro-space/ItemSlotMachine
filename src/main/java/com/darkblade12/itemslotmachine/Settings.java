@@ -22,6 +22,7 @@ public class Settings extends SettingsBase<ItemSlotMachine> {
     private Material coinType;
     private boolean useCommonCoinItem;
     private double coinPrice;
+    private boolean coinGiveMessageFromConsole;
 
     public Settings(ItemSlotMachine plugin) {
         super(plugin);
@@ -73,6 +74,8 @@ public class Settings extends SettingsBase<ItemSlotMachine> {
             plugin.logWarning("The value of setting %s must be greater than 0! Default value will be used.", Setting.COIN_TYPE);
             coinPrice = DEFAULT_COIN_PRICE;
         }
+        // 既定値を渡さず、jar 内 config.yml の既定値(false)を使う
+        coinGiveMessageFromConsole = config.getBoolean(Setting.COIN_GIVE_MESSAGE_FROM_CONSOLE.getPath());
     }
 
     @Override
@@ -123,5 +126,9 @@ public class Settings extends SettingsBase<ItemSlotMachine> {
 
     public double getCoinPrice() {
         return coinPrice;
+    }
+
+    public boolean isCoinGiveMessageFromConsole() {
+        return coinGiveMessageFromConsole;
     }
 }
