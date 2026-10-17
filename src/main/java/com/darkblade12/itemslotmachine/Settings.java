@@ -12,6 +12,7 @@ public class Settings extends SettingsBase<ItemSlotMachine> {
     private static final String DEFAULT_SLOT_MACHINE_NAME_PATTERN = "design{0}";
     private static final Material DEFAULT_COIN_TYPE = Material.GOLD_NUGGET;
     private static final double DEFAULT_COIN_PRICE = 100.0;
+    private static final int DEFAULT_COIN_SHOP_SNEAK_STEP = 10;
     private boolean debugModeEnabled;
     private String languageTag;
     private String designNamePattern;
@@ -22,6 +23,7 @@ public class Settings extends SettingsBase<ItemSlotMachine> {
     private Material coinType;
     private boolean useCommonCoinItem;
     private double coinPrice;
+    private int coinShopSneakStep;
     private boolean coinGiveMessageFromConsole;
 
     public Settings(ItemSlotMachine plugin) {
@@ -73,6 +75,11 @@ public class Settings extends SettingsBase<ItemSlotMachine> {
         if (coinPrice <= 0) {
             plugin.logWarning("The value of setting %s must be greater than 0! Default value will be used.", Setting.COIN_TYPE);
             coinPrice = DEFAULT_COIN_PRICE;
+        }
+        coinShopSneakStep = config.getInt(Setting.COIN_SHOP_SNEAK_STEP.getPath(), DEFAULT_COIN_SHOP_SNEAK_STEP);
+        if (coinShopSneakStep < 1) {
+            plugin.logWarning("The value of setting %s must be greater than 0! Default value will be used.", Setting.COIN_SHOP_SNEAK_STEP);
+            coinShopSneakStep = DEFAULT_COIN_SHOP_SNEAK_STEP;
         }
         // 既定値を渡さず、jar 内 config.yml の既定値(false)を使う
         coinGiveMessageFromConsole = config.getBoolean(Setting.COIN_GIVE_MESSAGE_FROM_CONSOLE.getPath());
@@ -126,6 +133,10 @@ public class Settings extends SettingsBase<ItemSlotMachine> {
 
     public double getCoinPrice() {
         return coinPrice;
+    }
+
+    public int getCoinShopSneakStep() {
+        return coinShopSneakStep;
     }
 
     public boolean isCoinGiveMessageFromConsole() {

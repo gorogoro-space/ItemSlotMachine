@@ -237,15 +237,22 @@ public final class CoinManager extends Manager<ItemSlotMachine> {
             updateShop(player, lastShop.getBukkitLocation(), 1);
         }
 
-        int coins = lastShop == null ? 1 : lastShop.getCoins();
-        int amount = player.isSneaking() ? 10 : 1;
-        boolean increase = next < previous && (previous != 8 || next != 0) || previous == 0 && next == 8;
-        coins += increase ? amount : -amount;
-        if (coins < 1) {
-            coins = 1;
-        } else if (coins > 100) {
-            coins = 100;
+        // 看板を見ている間は、スロットは切り替えず、枚数の変更だけに使う
+        event.setCancelled(true);
+
+        // 切り替わったスロット数(円周上の差。-4〜4)を回数として数える。
+        // キャンセルするとスロットが動かないので、速く回すと「元のスロット → 2 つ先」のように届く
+        int diff = ((next - previous) % 9 + 9) % 9;
+        if (diff > 4) {
+            diff -= 9;
         }
+
+        int coins = lastShop == null ? 1 : lastShop.getCoins();
+        int amount = player.isSneaking() ? plugin.getSettings().getCoinShopSneakStep() : 1;
+        // スロット番号が小さくなる方向(0 から 8 への回り込みを含む)が増やす向き
+        // 設定値が大きくてもあふれないよう long で計算してから、1〜100 に収める
+        long total = coins + (long) amount * -diff;
+        coins = (int) Math.max(1, Math.min(100, total));
 
         updateShop(player, location, coins);
     }
