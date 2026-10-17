@@ -41,6 +41,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class CoinManager extends Manager<ItemSlotMachine> {
+    // 連続したスクロールとみなす、イベントの間隔の上限(ミリ秒)
+    private static final long SCROLL_CONTINUE_MILLIS = 500;
+
     private final Map<UUID, ShopInfo> lastShop;
     private ItemStack coin;
     // 2.0.1 までに作ったコインの判定用(コインの名前と説明文を文字列に戻したもの。use-common-item のときは null)
@@ -240,11 +243,21 @@ public final class CoinManager extends Manager<ItemSlotMachine> {
         // 看板を見ている間は、スロットは切り替えず、枚数の変更だけに使う
         event.setCancelled(true);
 
-        // 切り替わったスロット数(円周上の差。-4〜4)を回数として数える。
-        // キャンセルするとスロットが動かないので、速く回すと「元のスロット → 2 つ先」のように届く
-        int diff = ((next - previous) % 9 + 9) % 9;
-        if (diff > 4) {
-            diff -= 9;
+        // キャンセルするとサーバー側のスロットは動かないので、速く回すと「元のスロット → 2 つ先」のように届く。
+        // また、数字キーは離れたスロットへ一度に飛ぶ。次の順で、増減の回数を決める
+        long now = System.currentTimeMillis();
+        int diff = 0;
+        // 1. 直前に届いたスロットから 1 つ隣なら、連続したスクロールの 1 ノッチ
+        if (lastShop != null && now - lastShop.getHeldAt() <= SCROLL_CONTINUE_MILLIS) {
+            diff = circularDiff(next, lastShop.getHeldSlot());
+        }
+        // 2. サーバー側のスロットから 1 つ隣なら、(補正が先に届いた後の)1 ノッチ
+        if (Math.abs(diff) != 1) {
+            diff = circularDiff(next, previous);
+        }
+        // 3. どちらでもなければ数字キー。回り込まず、スロット番号の差をそのまま使う(向きが逆にならない)
+        if (Math.abs(diff) != 1) {
+            diff = next - previous;
         }
 
         int coins = lastShop == null ? 1 : lastShop.getCoins();
@@ -255,6 +268,16 @@ public final class CoinManager extends Manager<ItemSlotMachine> {
         coins = (int) Math.max(1, Math.min(100, total));
 
         updateShop(player, location, coins);
+        ShopInfo info = getLastShop(player);
+        if (info != null) {
+            info.setHeld(next, now);
+        }
+    }
+
+    // 9 つのスロットを円として見たときの、from から to までの差(-4〜4)
+    private static int circularDiff(int to, int from) {
+        int diff = ((to - from) % 9 + 9) % 9;
+        return diff > 4 ? diff - 9 : diff;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
