@@ -39,6 +39,8 @@ public class SlotMachineSettings extends SettingsBase<ItemSlotMachine> {
     boolean launchFireworks;
     int reelStop;
     int[] reelDelay;
+    boolean anticipate;
+    int anticipateSpins;
     double winningChance;
     boolean triplePaysPot;
     boolean symbolWeightsActive;
@@ -89,17 +91,17 @@ public class SlotMachineSettings extends SettingsBase<ItemSlotMachine> {
         individualPermission = config.getBoolean(Setting.INDIVIDUAL_PERMISSION.getPath());
 
         reelStop = config.getInt(Setting.REEL_STOP.getPath());
-        // 以前の初期値。役が決まるまでの回転を約3分の1にするため、7として読む
-        if (reelStop == 20) {
-            reelStop = 7;
-        }
         List<Integer> reelDelayList = config.getIntegerList(Setting.REEL_DELAY.getPath());
         if (reelDelayList.size() != 3) {
             throw new InvalidValueException("The list size of setting {0} must be 3.", Setting.REEL_DELAY);
         }
         reelDelay = Ints.toArray(reelDelayList);
-        if (reelDelay[0] == 0 && reelDelay[1] == 5 && reelDelay[2] == 10) {
-            reelDelay = new int[] { 0, 2, 3 };
+
+        anticipate = config.getBoolean(Setting.ANTICIPATE.getPath());
+        String anticipatePath = Setting.ANTICIPATE_SPINS.getPath();
+        anticipateSpins = config.contains(anticipatePath) ? config.getInt(anticipatePath) : 8;
+        if (anticipateSpins < 0 || anticipateSpins > 40) {
+            throw new InvalidValueException("The value of setting {0} must be between 0 and 40.", anticipatePath);
         }
 
         winningChance = config.getDouble(Setting.WINNING_CHANCE.getPath());

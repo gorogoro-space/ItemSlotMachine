@@ -143,13 +143,25 @@ public final class SlotMachine implements Nameable {
     }
 
     private void playSounds(SoundInfo[] sounds) {
+        playSounds(sounds, 1f);
+    }
+
+    private void playSounds(SoundInfo[] sounds, float pitchScale) {
         Player user = getUser();
         Location location = design.getSlot().toBukkitLocation(getLocation(), buildDirection);
         for (SoundInfo sound : sounds) {
             if (sound.isBroadcast()) {
-                sound.play(location);
+                if (pitchScale == 1f) {
+                    sound.play(location);
+                } else {
+                    sound.play(location, pitchScale);
+                }
             } else if (user != null) {
-                sound.play(user, location);
+                if (pitchScale == 1f) {
+                    sound.play(user, location);
+                } else {
+                    sound.play(user, location, pitchScale);
+                }
             }
         }
     }
@@ -362,13 +374,16 @@ public final class SlotMachine implements Nameable {
         }
 
         final Material[] result = generatePattern();
+        final int anticipateExtra = settings.anticipate && result[0] == result[1] ? settings.anticipateSpins : 0;
         task = new BukkitRunnable() {
             private int spins = 0;
             private int stoppedAt = -1;
 
             @Override
             public void run() {
-                playSounds(settings.spinSounds);
+                boolean anticipating = anticipateExtra > 0 && stoppedAt != -1
+                        && spins > stoppedAt + settings.reelDelay[frames.length - 1];
+                playSounds(settings.spinSounds, anticipating ? 1.25f : 1f);
                 if (settings.reelStop > 0 && spins == settings.reelStop) {
                     stopped = true;
                 }
@@ -379,6 +394,9 @@ public final class SlotMachine implements Nameable {
 
                 for (int i = 0; i < frames.length; i++) {
                     int delay = settings.reelDelay[i];
+                    if (i == frames.length - 1) {
+                        delay += anticipateExtra;
+                    }
                     int remaining = stoppedAt == -1 ? 1 : stoppedAt + delay - spins;
                     if (!stopped || remaining >= 0) {
                         Material symbol = remaining == 0 ? result[i] : generateSymbol();

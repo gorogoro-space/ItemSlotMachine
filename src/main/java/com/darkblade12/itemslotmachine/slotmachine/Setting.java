@@ -8,6 +8,8 @@ public enum Setting {
     INDIVIDUAL_PERMISSION("individual-permission"),
     REEL_STOP("reel-stop"),
     REEL_DELAY("reel-delay"),
+    ANTICIPATE("anticipate"),
+    ANTICIPATE_SPINS("anticipate-spins"),
     WINNING_CHANCE("winning-chance"),
     TRIPLE_PAYS_POT("triple-pays-pot"),
     LOCK_TIME("lock-time"),
